@@ -297,17 +297,33 @@
     let current = 1; const answers = {};
 
     function progress(){
-      const pct = Math.round(((current-1)/totalSteps)*100);
+      let pct;
+      let badge;
+      if(current === 'result' || current === totalSteps + 1) {
+        pct = 100;
+        badge = totalSteps;
+        $('#nextBtn').style.display = 'none';
+      } else {
+        pct = Math.round(((current-1)/totalSteps)*100);
+        badge = Math.min(current, totalSteps);
+        $('#nextBtn').style.display = '';
+      }
       $('#progressBar').style.width = pct+'%';
-      $('#stepBadge').textContent = Math.min(current, totalSteps);
+      $('#stepBadge').textContent = badge;
       $('#prevBtn').disabled = current===1;
       $('#nextBtn').textContent = current===totalSteps ? 'Enviar' : 'Continuar';
     }
     function showStep(n){
       $$('.q').forEach(q=> q.hidden = true);
       const block = $(`.q[data-step="${n}"]`);
-      if(block) block.hidden = false; else $(`.q[data-step="result"]`).hidden = false;
-      current = n; progress();
+      if(block) {
+        block.hidden = false;
+        current = n;
+      } else {
+        $(`.q[data-step="result"]`).hidden = false;
+        current = 'result';
+      }
+      progress();
     }
 
     // Choice listeners
